@@ -1,3 +1,4 @@
+```
 # iOS App Review 评论分析与版本规划工具
 
 基于用户评论的全链路 AI 产品分析工具，覆盖评论抓取、数据清洗、语义分析、PRD生成、测试用例产出完整闭环。
@@ -50,6 +51,8 @@
 
 ## 📦 项目结构
 
+```
+
 ios-review-analyzer/
 ├── config/
 │   └── settings.py          # 全局配置（主题、模型、常量）
@@ -62,18 +65,22 @@ ios-review-analyzer/
 ├── utils/
 │   ├── cache.py             # 缓存工具
 │   └── exporter.py          # 导出工具
-├── .env                     # 环境变量（自行创建）
+├── data/
+│   └── sample_reviews.csv   # 内置示例数据集
+├── .env.example             # 环境变量示例
 ├── .gitignore
 ├── app.py                   # 主程序入口
 ├── requirements.txt
 └── README.md
 
+```
 
 ## 🚀 快速开始
 
 ### 1. 安装依赖
-```bash
+```
 pip install -r requirements.txt
+```
 
 ### 2. 配置环境变量
 
@@ -86,12 +93,18 @@ DEFAULT_MODEL=deepseek-chat
 LLM_TEMPERATURE=0.3
 ENABLE_CACHE=True
 ```
-3. 启动项目
+
+### 3. 启动项目
+
+```
 streamlit run app.py
+```
+
+浏览器自动打开 `http://localhost:8501` 即可使用。
 
 ## 📝 使用说明
 
-1. **选择数据源**：在线抓取或本地文件导入
+1. **选择数据源**：在线抓取 / 本地文件导入 / 内置示例数据
 2. **配置 AI 功能**：勾选需要启用的分析能力
 3. **点击「开始全流程分析」**
 4. **查看结果**：数据概览、语义分析、PRD 规划、测试用例
@@ -99,6 +112,6 @@ streamlit run app.py
 
 ## ⚠️ 注意事项
 
-- 在线抓取受网络环境限制，若无法获取数据，请使用本地文件导入功能
+- 在线抓取受网络环境限制，若无法获取数据，请使用本地文件导入或内置示例数据
 - 大模型调用会产生费用，建议开启缓存降低成本
 - 所有数据仅在本地处理，不会上传至第三方服务器
