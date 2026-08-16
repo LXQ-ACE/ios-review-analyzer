@@ -47,7 +47,7 @@ class ThemeConfig:
 class LLMConfig:
     """大模型API配置"""
     
-    # DeepSeek配置
+    # DeepSeek 配置（OpenAI 兼容格式）
     DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
     DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
     

@@ -14,48 +14,34 @@ def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
     字段自动标准化：将常见的中英文列名映射为项目标准字段
     兼容不同来源的CSV/JSON文件
     """
-    # 列名映射表：常见别名 -> 标准字段名
     column_mapping = {
-        # 评论ID
         "id": "review_id",
         "评论ID": "review_id",
         "review_id": "review_id",
         "reviewId": "review_id",
-        
-        # 评分
         "rating": "rating",
         "评分": "rating",
         "星级": "rating",
         "score": "rating",
         "star": "rating",
-        
-        # 标题
         "title": "title",
         "标题": "title",
         "评论标题": "title",
-        
-        # 评论内容
         "content": "content",
         "评论内容": "content",
         "review": "content",
         "body": "content",
         "text": "content",
         "内容": "content",
-        
-        # 用户
         "author": "author",
         "用户": "author",
         "用户名": "author",
         "user": "author",
         "userName": "author",
-        
-        # 版本号
         "version": "version",
         "版本": "version",
         "应用版本": "version",
         "app_version": "version",
-        
-        # 发布时间
         "publish_time": "publish_time",
         "发布时间": "publish_time",
         "时间": "publish_time",
@@ -63,8 +49,7 @@ def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
         "updated": "publish_time",
         "created_at": "publish_time"
     }
-    
-    # 列名转小写后匹配，不区分大小写
+
     rename_dict = {}
     for col in df.columns:
         col_lower = col.strip().lower()
@@ -72,34 +57,34 @@ def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
             if col_lower == alias.lower():
                 rename_dict[col] = standard
                 break
-    
+
     if rename_dict:
         df = df.rename(columns=rename_dict)
-    
-    # 核心字段缺失兜底：如果没有review_id，用索引生成
+
     if "review_id" not in df.columns:
         df["review_id"] = [f"local_{i}" for i in range(len(df))]
-    
-    # 确保内容字段存在
+
     if "content" not in df.columns:
         raise ValueError("CSV文件中未找到评论内容字段，请确保包含 content / 评论内容 / review 等列")
-    
+
     return df
 
 
 def apply_theme(is_dark: bool):
     """
-    彻底版主题样式：覆盖所有原生组件，无死角染色
+    完整主题样式：修复侧边栏折叠按钮、单选组件对比度
     """
     if is_dark:
         bg_color = ThemeConfig.DARK_BG
         card_bg = ThemeConfig.DARK_CARD_BG
-        text_color = "#E8E8F0"
-        subtext_color = "#A0A0B8"
-        border_color = ThemeConfig.DARK_BORDER
-        input_bg = "#252539"
+        text_color = "#FFFFFF"
+        subtext_color = "#D8D8E8"
+        border_color = "#555577"
+        input_bg = "#3A3A5A"
         sidebar_bg = "#252539"
         header_bg = "#1E1E2E"
+        collapse_btn_bg = "#3A3A5A"
+        collapse_btn_color = "#FFFFFF"
     else:
         bg_color = ThemeConfig.LIGHT_BG
         card_bg = ThemeConfig.LIGHT_CARD_BG
@@ -109,16 +94,18 @@ def apply_theme(is_dark: bool):
         input_bg = "#FFFFFF"
         sidebar_bg = "#FBFBFF"
         header_bg = "#FFFFFF"
+        collapse_btn_bg = "#F0F2F6"
+        collapse_btn_color = "#2D3436"
 
     custom_css = f"""
     <style>
-        /* 最底层：整个页面背景 */
+        /* 页面基础 */
         .stApp {{
             background-color: {bg_color};
             color: {text_color};
         }}
-        
-        /* 顶部工具栏、header 白条兜底 */
+
+        /* 顶部工具栏 */
         header[data-testid="stHeader"] {{
             background-color: {header_bg};
             border-bottom: 1px solid {border_color};
@@ -127,28 +114,28 @@ def apply_theme(is_dark: bool):
             background-color: {header_bg};
             color: {text_color};
         }}
-        
-        /* 文字全量兜底 */
+
+        /* 全局文字兜底 */
         html, body, [class*="css"]  {{
             color: {text_color} !important;
         }}
-        
+
         p, span, label, div, li, ul, ol {{
             color: {text_color};
         }}
-        
+
         .subtext, small, .stCaption {{
             color: {subtext_color} !important;
             font-size: 0.85rem;
         }}
-        
-        /* 标题层级 */
+
+        /* 标题 */
         h1, h2, h3, h4, h5, h6 {{
             color: {ThemeConfig.PRIMARY_COLOR} !important;
             font-weight: 600;
             letter-spacing: 0.3px;
         }}
-        
+
         /* 侧边栏 */
         section[data-testid="stSidebar"] {{
             background-color: {sidebar_bg} !important;
@@ -158,18 +145,37 @@ def apply_theme(is_dark: bool):
         section[data-testid="stSidebar"] * {{
             color: {text_color} !important;
         }}
-        
-        /* 输入框、下拉框 */
-        .stTextInput input,
-        .stTextArea textarea,
-        .stNumberInput input,
-        .stSelectbox div[data-baseweb="select"] > div {{
+
+        /* 侧边栏收起/展开按钮 */
+        button[data-testid="stSidebarCollapseButton"] {{
+            background-color: {collapse_btn_bg} !important;
+            color: {collapse_btn_color} !important;
+            border: 1px solid {border_color} !important;
+            border-radius: 8px !important;
+        }}
+        button[data-testid="stSidebarCollapseButton"]:hover {{
+            background-color: {ThemeConfig.PRIMARY_COLOR} !important;
+            color: #FFFFFF !important;
+        }}
+
+        /* 侧边栏输入框、文本域 */
+        section[data-testid="stSidebar"] .stTextInput input,
+        section[data-testid="stSidebar"] .stTextArea textarea,
+        section[data-testid="stSidebar"] .stNumberInput input {{
             background-color: {input_bg} !important;
             color: {text_color} !important;
             border: 1px solid {border_color} !important;
             border-radius: 8px !important;
         }}
-        
+
+        /* 单选按钮组样式 */
+        .stRadio > div {{
+            gap: 0.6rem;
+        }}
+        .stRadio label {{
+            color: {subtext_color} !important;
+        }}
+
         /* 滑块 */
         .stSlider [data-testid="stTickBar"] {{
             background: {border_color};
@@ -177,7 +183,7 @@ def apply_theme(is_dark: bool):
         .stSlider [data-testid="stThumbValue"] {{
             color: {ThemeConfig.PRIMARY_COLOR} !important;
         }}
-        
+
         /* 主按钮 */
         .stButton>button[data-testid="baseButton-primary"] {{
             background: linear-gradient(135deg, {ThemeConfig.PRIMARY_COLOR} 0%, {ThemeConfig.SECONDARY_COLOR} 100%);
@@ -193,7 +199,7 @@ def apply_theme(is_dark: bool):
             transform: translateY(-1px);
             box-shadow: 0 6px 20px rgba(108, 92, 231, 0.35);
         }}
-        
+
         /* 次按钮 */
         .stButton>button {{
             background-color: {card_bg};
@@ -206,14 +212,14 @@ def apply_theme(is_dark: bool):
             border-color: {ThemeConfig.PRIMARY_COLOR};
             color: {ThemeConfig.PRIMARY_COLOR} !important;
         }}
-        
+
         /* 分割线 */
         hr {{
             border-color: {border_color};
             opacity: 0.6;
             margin: 1rem 0;
         }}
-        
+
         /* 提示框 */
         .stAlert {{
             border-radius: 10px;
@@ -223,7 +229,7 @@ def apply_theme(is_dark: bool):
         .stAlert * {{
             color: {text_color} !important;
         }}
-        
+
         /* 功能卡片 */
         .feature-card {{
             background-color: {card_bg};
@@ -248,7 +254,7 @@ def apply_theme(is_dark: bool):
             margin: 0;
             line-height: 1.6;
         }}
-        
+
         /* 数据统计卡片 */
         .stat-card {{
             background: linear-gradient(135deg, {card_bg} 0%, {input_bg} 100%);
@@ -267,19 +273,31 @@ def apply_theme(is_dark: bool):
             font-size: 0.85rem;
             color: {subtext_color};
         }}
-        
+
         /* 布局优化 */
         .block-container {{
             padding-top: 2rem;
             padding-bottom: 2rem;
             max-width: 1200px;
         }}
-        
+
         /* 文件上传 */
         [data-testid="stFileUploader"] {{
             background-color: {card_bg};
             border: 1px dashed {border_color};
             border-radius: 10px;
+        }}
+
+        /* Tab 标签 */
+        .stTabs [data-baseweb="tab-list"] {{
+            gap: 2rem;
+        }}
+        .stTabs [data-baseweb="tab"] {{
+            color: {subtext_color};
+        }}
+        .stTabs [aria-selected="true"] {{
+            color: {ThemeConfig.PRIMARY_COLOR} !important;
+            border-bottom: 2px solid {ThemeConfig.PRIMARY_COLOR};
         }}
     </style>
     """
@@ -316,7 +334,7 @@ def render_sidebar():
         st.markdown("### ⚙️ 配置中心")
         st.divider()
 
-        # 夜间模式：直接判断状态变化 + 强制刷新，点一次就生效
+        # 夜间模式
         st.markdown("#### 🎨 显示设置")
         new_dark = st.toggle(
             "夜间模式",
@@ -347,16 +365,17 @@ def render_sidebar():
 
         st.divider()
 
-        # 快速示例
+        # 快速体验：改用单选按钮，彻底避开下拉浮层样式问题
         st.markdown("#### ⚡ 快速体验")
         example_apps = {
             "健身应用": "https://apps.apple.com/us/app/workout-for-women-home-gym/id839285684",
             "笔记应用": "https://apps.apple.com/us/app/notability/id360593530",
             "摄影应用": "https://apps.apple.com/us/app/vsco-photo-video-editor/id588013838"
         }
-        selected_example = st.selectbox(
+        selected_name = st.radio(
             "选择示例App",
             options=list(example_apps.keys()),
+            index=0,
             label_visibility="collapsed"
         )
 
@@ -364,7 +383,7 @@ def render_sidebar():
         st.caption(f"v{PROJECT_VERSION}")
         st.caption(PROJECT_DESCRIPTION)
 
-        return data_source, enable_ai, generate_prd, generate_test, example_apps[selected_example]
+        return data_source, enable_ai, generate_prd, generate_test, example_apps[selected_name]
 
 
 def render_header():
@@ -375,7 +394,7 @@ def render_header():
 
 
 def render_feature_overview():
-    """渲染核心能力概览卡片，填充首页空白"""
+    """渲染核心能力概览卡片"""
     st.subheader("✨ 核心能力")
     st.markdown("")
 
@@ -498,8 +517,7 @@ def render_review_table(df, title="评论数据"):
     if df.empty:
         st.warning("暂无数据")
         return
-    
-    # 只展示核心字段
+
     show_cols = [col for col in ["rating", "title", "content", "author", "version", "publish_time"] if col in df.columns]
     display_df = df[show_cols].copy()
     display_df.columns = ["评分", "标题", "内容", "用户", "版本", "发布时间"][:len(show_cols)]
@@ -546,51 +564,46 @@ def main():
     if start_btn:
         with st.spinner("正在处理数据..."):
             try:
-                # 1. 获取原始数据
                 if data_source == "在线抓取":
                     raw_df = fetch_app_reviews(app_url=app_url, max_pages=max_pages)
                 else:
                     if uploaded_file is None:
                         st.warning("请先上传数据文件")
                         st.stop()
-                    # 读取文件
                     if uploaded_file.name.endswith(".csv"):
                         raw_df = pd.read_csv(uploaded_file)
                     else:
                         raw_df = pd.read_json(uploaded_file)
-                    
-                    # 字段自动标准化
                     raw_df = standardize_columns(raw_df)
-                
+
                 if raw_df.empty:
                     st.error("未获取到任何评论数据，请检查输入内容")
                     st.stop()
-                
-                # 2. 数据清洗
+
+                # 数据清洗
                 clean_df, clean_stats = clean_review_data(raw_df)
-                
-                # 3. 存入会话状态
+
+                # 存入会话状态
                 st.session_state.reviews_df = raw_df
                 st.session_state.clean_df = clean_df
                 st.session_state.clean_stats = clean_stats
-                
+
                 st.success(f"✅ 数据处理完成，原始 {len(raw_df)} 条，有效 {len(clean_df)} 条")
-                
+
             except Exception as e:
-                # 显示完整错误信息，方便排查
                 st.error(f"处理失败：{str(e)}")
                 st.stop()
 
     # 数据结果展示
     if st.session_state.clean_df is not None:
         st.divider()
-        
+
         render_data_overview(
             st.session_state.reviews_df,
             st.session_state.clean_df,
             st.session_state.clean_stats
         )
-        
+
         tab1, tab2 = st.tabs(["有效评论数据", "原始评论数据"])
         with tab1:
             render_review_table(st.session_state.clean_df, "有效评论")
