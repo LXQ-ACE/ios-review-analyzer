@@ -4,6 +4,7 @@
 """
 import streamlit as st
 import pandas as pd
+import os
 from config.settings import ThemeConfig, PROJECT_NAME, PROJECT_VERSION, PROJECT_DESCRIPTION
 from core.data_fetcher import fetch_app_reviews
 from core.data_cleaner import clean_review_data
@@ -16,6 +17,14 @@ from utils.exporter import (
     full_report_markdown,
     string_to_bytes
 )
+
+
+def load_sample_data() -> pd.DataFrame:
+    """加载内置示例数据集"""
+    sample_path = os.path.join("data", "sample_reviews.csv")
+    if os.path.exists(sample_path):
+        return pd.read_csv(sample_path)
+    return pd.DataFrame()
 
 
 def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -196,7 +205,7 @@ def render_sidebar():
 
         st.divider()
         st.markdown("#### 📥 数据源")
-        data_source = st.radio("数据来源", ["在线抓取", "本地文件导入"], index=0, label_visibility="collapsed")
+        data_source = st.radio("数据来源", ["在线抓取", "本地文件导入", "内置示例数据"], index=2, label_visibility="collapsed")
 
         st.divider()
         st.markdown("#### 🤖 AI分析配置")
@@ -274,9 +283,12 @@ def render_data_input(data_source: str, example_url: str):
         with col2:
             max_pages = st.slider("抓取页数", min_value=1, max_value=10, value=5, help="每页约50条评论")
         return app_url, max_pages, None
-    else:
+    elif data_source == "本地文件导入":
         uploaded_file = st.file_uploader("上传评论数据集", type=["csv", "json"], help="支持 CSV / JSON 格式")
         return "", 0, uploaded_file
+    else:
+        st.info("💡 使用内置示例数据集，可直接体验完整功能")
+        return "", 0, "sample"
 
 
 def render_data_overview(raw_df, clean_df, stats):
@@ -303,9 +315,9 @@ def render_review_table(df, title="评论数据"):
     if df.empty:
         st.warning("暂无数据")
         return
-    show_cols = [col for col in ["rating", "title", "content", "author", "version", "publish_time"] if col in df.columns]
+    show_cols = [col for col in ["rating", "title", "content", "author", "version"] if col in df.columns]
     display_df = df[show_cols].copy()
-    display_df.columns = ["评分", "标题", "内容", "用户", "版本", "发布时间"][:len(show_cols)]
+    display_df.columns = ["评分", "标题", "内容", "用户", "版本"][:len(show_cols)]
     st.dataframe(display_df, use_container_width=True, height=420)
 
 
@@ -504,7 +516,7 @@ def main():
             with st.spinner("正在获取并清洗数据..."):
                 if data_source == "在线抓取":
                     raw_df = fetch_app_reviews(app_url=app_url, max_pages=max_pages)
-                else:
+                elif data_source == "本地文件导入":
                     if uploaded_file is None:
                         st.warning("请先上传数据文件")
                         st.stop()
@@ -512,6 +524,10 @@ def main():
                         raw_df = pd.read_csv(uploaded_file)
                     else:
                         raw_df = pd.read_json(uploaded_file)
+                    raw_df = standardize_columns(raw_df)
+                else:
+                    # 内置示例数据
+                    raw_df = load_sample_data()
                     raw_df = standardize_columns(raw_df)
 
                 if raw_df.empty:

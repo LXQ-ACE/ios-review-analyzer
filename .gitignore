@@ -1,39 +1,29 @@
-# 环境变量与密钥
+# 环境变量
 .env
-*.key
-*.pem
 
-# Python缓存
+# 缓存目录
+cache/
 __pycache__/
-*.py[cod]
-*$py.class
-.pytest_cache/
-.mypy_cache/
+*.pyc
 
 # 虚拟环境
 venv/
 env/
 .venv/
-env.bak/
-venv.bak/
 
-# Streamlit缓存
-.streamlit/secrets.toml
-
-# 临时数据文件
-*.csv
-*.json
-*.xlsx
-data/
-output/
-cache/
-
-# IDE配置
-.vscode/
+# IDE
 .idea/
+.vscode/
 *.swp
 *.swo
 
 # 系统文件
 .DS_Store
 Thumbs.db
+
+# 日志
+*.log
+
+# 临时数据
+data/*.csv
+!data/sample_reviews.csv
