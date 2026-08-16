@@ -8,6 +8,14 @@ from config.settings import ThemeConfig, PROJECT_NAME, PROJECT_VERSION, PROJECT_
 from core.data_fetcher import fetch_app_reviews
 from core.data_cleaner import clean_review_data
 from core.analyzer import analyze_reviews, generate_prd, generate_test_cases
+from utils.exporter import (
+    df_to_csv_bytes,
+    analysis_to_markdown,
+    prd_to_markdown,
+    testcase_to_markdown,
+    full_report_markdown,
+    string_to_bytes
+)
 
 
 def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -399,6 +407,65 @@ def render_test_case_result(test_result):
             st.caption(f"对应需求：{case.related_requirement}")
 
 
+def render_export_section():
+    """渲染导出区域"""
+    st.subheader("📤 结果导出")
+    st.markdown("")
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        # 导出评论数据 CSV
+        csv_bytes = df_to_csv_bytes(st.session_state.clean_df)
+        st.download_button(
+            label="📊 导出评论数据",
+            data=csv_bytes,
+            file_name="评论数据.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+
+    with col2:
+        # 导出分析报告
+        if st.session_state.analysis_result:
+            md_text = analysis_to_markdown(st.session_state.analysis_result)
+            st.download_button(
+                label="🤖 导出分析报告",
+                data=string_to_bytes(md_text),
+                file_name="AI语义分析报告.md",
+                mime="text/markdown",
+                use_container_width=True
+            )
+
+    with col3:
+        # 导出 PRD
+        if st.session_state.prd_result:
+            md_text = prd_to_markdown(st.session_state.prd_result)
+            st.download_button(
+                label="📋 导出PRD文档",
+                data=string_to_bytes(md_text),
+                file_name="产品需求文档.md",
+                mime="text/markdown",
+                use_container_width=True
+            )
+
+    with col4:
+        # 导出完整报告
+        if st.session_state.test_case_result:
+            full_md = full_report_markdown(
+                st.session_state.analysis_result,
+                st.session_state.prd_result,
+                st.session_state.test_case_result
+            )
+            st.download_button(
+                label="📑 导出完整报告",
+                data=string_to_bytes(full_md),
+                file_name="全链路分析报告.md",
+                mime="text/markdown",
+                use_container_width=True
+            )
+
+
 def render_data_limit_note():
     st.info("""
     **📌 数据说明与局限性**
@@ -509,6 +576,10 @@ def main():
         if st.session_state.test_case_result is not None:
             st.divider()
             render_test_case_result(st.session_state.test_case_result)
+
+        # 导出区域
+        st.divider()
+        render_export_section()
 
     st.divider()
     render_data_limit_note()
