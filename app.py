@@ -7,6 +7,7 @@ import pandas as pd
 from config.settings import ThemeConfig, PROJECT_NAME, PROJECT_VERSION, PROJECT_DESCRIPTION
 from core.data_fetcher import fetch_app_reviews
 from core.data_cleaner import clean_review_data
+from core.analyzer import analyze_reviews
 
 
 def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -274,6 +275,20 @@ def apply_theme(is_dark: bool):
             color: {subtext_color};
         }}
 
+        /* 分析结果卡片 */
+        .analysis-card {{
+            background-color: {card_bg};
+            border: 1px solid {border_color};
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }}
+        .analysis-card h4 {{
+            color: {ThemeConfig.PRIMARY_COLOR};
+            margin-top: 0;
+            margin-bottom: 0.8rem;
+        }}
+
         /* 布局优化 */
         .block-container {{
             padding-top: 2rem;
@@ -299,6 +314,28 @@ def apply_theme(is_dark: bool):
             color: {ThemeConfig.PRIMARY_COLOR} !important;
             border-bottom: 2px solid {ThemeConfig.PRIMARY_COLOR};
         }}
+
+        /* 标签徽章 */
+        .badge {{
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }}
+        .badge-high {{
+            background-color: rgba(225, 112, 85, 0.15);
+            color: #E17055;
+        }}
+        .badge-mid {{
+            background-color: rgba(253, 203, 110, 0.15);
+            color: #FDCB6E;
+        }}
+        .badge-low {{
+            background-color: rgba(0, 184, 148, 0.15);
+            color: #00B894;
+        }}
     </style>
     """
     st.markdown(custom_css, unsafe_allow_html=True)
@@ -318,10 +355,9 @@ def init_page():
         "reviews_df": None,
         "clean_df": None,
         "clean_stats": None,
-        "categories": None,
-        "prd_versions": None,
-        "test_cases": None,
-        "analysis_step": 0
+        "analysis_result": None,
+        "prd_result": None,
+        "test_case_result": None
     }
     for key, value in default_states.items():
         if key not in st.session_state:
@@ -365,7 +401,7 @@ def render_sidebar():
 
         st.divider()
 
-        # 快速体验：改用单选按钮，彻底避开下拉浮层样式问题
+        # 快速体验
         st.markdown("#### ⚡ 快速体验")
         example_apps = {
             "健身应用": "https://apps.apple.com/us/app/workout-for-women-home-gym/id839285684",
@@ -524,6 +560,62 @@ def render_review_table(df, title="评论数据"):
     st.dataframe(display_df, use_container_width=True, height=420)
 
 
+def render_analysis_result(result):
+    """渲染AI语义分析结果"""
+    st.subheader("🤖 AI 语义分析")
+    st.markdown("")
+
+    # 整体总结
+    st.markdown('<div class="analysis-card">', unsafe_allow_html=True)
+    st.markdown("#### 📝 整体评论总结")
+    st.write(result.overall_summary)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # 核心痛点 & 核心好评
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown('<div class="analysis-card">', unsafe_allow_html=True)
+        st.markdown("#### 🔴 核心痛点 Top5")
+        for i, point in enumerate(result.core_pain_points, 1):
+            st.write(f"{i}. {point}")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col2:
+        st.markdown('<div class="analysis-card">', unsafe_allow_html=True)
+        st.markdown("#### 🟢 核心好评 Top5")
+        for i, point in enumerate(result.core_praise_points, 1):
+            st.write(f"{i}. {point}")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # 矛盾反馈
+    if result.contradiction_points:
+        st.markdown('<div class="analysis-card">', unsafe_allow_html=True)
+        st.markdown("#### ⚠️ 矛盾反馈识别")
+        for i, point in enumerate(result.contradiction_points, 1):
+            st.write(f"{i}. {point}")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # 动态分类详情
+    st.markdown("#### 📂 分类主题详情")
+    for cat in result.categories:
+        with st.expander(f"{cat.category_name} · {cat.priority}优先级 · {cat.issue_count}个问题点", expanded=False):
+            st.write(f"**说明**：{cat.category_desc}")
+            st.markdown("---")
+            for issue in cat.issues:
+                # 优先级徽章
+                level_class = "badge-high" if issue.evidence_level == "充足" else "badge-mid" if issue.evidence_level == "样本有限" else "badge-low"
+                st.markdown(f"""
+                <span class="badge {level_class}">{issue.evidence_level}</span>
+                <span class="badge badge-mid">{issue.sentiment}</span>
+                **{issue.issue_summary}**
+                """, unsafe_allow_html=True)
+                st.caption(f"提及样本数：{issue.evidence_count} 条")
+                if issue.is_contradictory and issue.contradictory_note:
+                    st.caption(f"⚠️ 矛盾说明：{issue.contradictory_note}")
+                st.markdown("")
+
+
 def render_data_limit_note():
     """渲染数据局限性说明"""
     st.info("""
@@ -564,6 +656,7 @@ def main():
     if start_btn:
         with st.spinner("正在处理数据..."):
             try:
+                # 1. 获取原始数据
                 if data_source == "在线抓取":
                     raw_df = fetch_app_reviews(app_url=app_url, max_pages=max_pages)
                 else:
@@ -580,7 +673,7 @@ def main():
                     st.error("未获取到任何评论数据，请检查输入内容")
                     st.stop()
 
-                # 数据清洗
+                # 2. 数据清洗
                 clean_df, clean_stats = clean_review_data(raw_df)
 
                 # 存入会话状态
@@ -590,8 +683,17 @@ def main():
 
                 st.success(f"✅ 数据处理完成，原始 {len(raw_df)} 条，有效 {len(clean_df)} 条")
 
+                # 3. AI 语义分析
+                if enable_ai:
+                    with st.spinner("AI 正在分析评论内容，请稍候..."):
+                        analysis_result = analyze_reviews(clean_df)
+                        st.session_state.analysis_result = analysis_result
+                    st.success("✅ AI 语义分析完成")
+
             except Exception as e:
                 st.error(f"处理失败：{str(e)}")
+                import traceback
+                traceback.print_exc()
                 st.stop()
 
     # 数据结果展示
@@ -609,6 +711,11 @@ def main():
             render_review_table(st.session_state.clean_df, "有效评论")
         with tab2:
             render_review_table(st.session_state.reviews_df, "原始评论")
+
+        # AI 分析结果展示
+        if st.session_state.analysis_result is not None:
+            st.divider()
+            render_analysis_result(st.session_state.analysis_result)
 
     # 底部说明
     st.divider()
