@@ -1,31 +1,31 @@
 review_id,rating,title,content,author,version
-s001,1,Constant Crashes,The app keeps crashing every time I open it. Completely unusable, really disappointing. Please fix this asap. user1,1.0.0
-s002,2,Too Many Ads,Way too many ads. There's an ad after every two pieces of content, it ruins the whole experience. user2,1.0.0
-s003,3,Decent But Ugly,It works fine functionally, but the UI design is really outdated and ugly. Hope you can polish the interface. user3,1.0.0
-s004,4,Pretty Good,Overall pretty solid. The workout plans are practical. I've been following them for two weeks and can see results. user4,1.0.0
-s005,5,Highly Recommend,Amazing fitness app. The courses are very professional and the customer support is super helpful. user5,1.0.0
-s006,1,Extremely Slow Loading,Takes forever to load every time I open it. Even with good Wi-Fi it's painfully slow. Bad experience. user6,1.0.0
-s007,2,Membership Too Expensive,The premium membership is way overpriced. Most features are locked behind paywall, not worth the money. user7,1.0.0
-s008,3,It's Okay,Just an average fitness app. Has all the basic features but nothing really stands out. user8,1.0.0
-s009,4,Great Workouts,The workout content is really diverse, suitable for people at different levels. Instructions are clear. user9,1.0.0
-s010,5,Love the Check-in Feature,My favorite part is the daily check-in. It keeps me motivated and helps me build a habit. user10,1.0.0
-s011,1,Inaccurate Calorie Count,Calorie calculation is totally off. Way off from the real numbers, completely useless for tracking. user11,1.0.0
-s012,2,Battery Drain Issue,It drains battery so fast in the background. My phone gets really hot after using it for a while. Needs optimization. user12,1.0.0
-s013,3,Average UI,Interface design is mediocre. Not great but not terrible either, it's functional. user13,1.0.0
-s014,4,Smart Recommendations,The recommended training plans fit me really well. It's customized based on my situation, very thoughtful. user14,1.0.0
-s015,5,Great Community,Everyone in the community is supportive and encouraging. Great fitness vibe. user15,1.0.0
-s016,1,Cannot Log In,Keeps failing to log in. Tried multiple accounts and none work. Can't even get into the app. user16,1.0.0
-s017,2,Poor Exercise Form,The demo exercises don't look like proper form. I'm afraid I'll get injured if I follow them. user17,1.0.0
-s018,3,Not Enough Free Content,There's very little free content. Most of it is paid, not a lot of options for free users. user18,1.0.0
-s019,4,Nice Reminder Feature,Daily reminders are really useful. I never forget to workout anymore. It helped me build a routine. user19,1.0.0
-s020,5,Seeing Real Progress,Been using it for a month and my stamina has improved noticeably. It actually works. user20,1.0.0
-s021,1,Terrible Support,Reached out to customer service with an issue and never heard back. Awful after-sales service. user21,1.0.0
-s022,2,Worse After Update,The last update made everything laggier. The old version was better, it keeps getting worse. user22,1.0.0
-s023,3,Need More Workouts,It's okay overall, but there aren't enough workout types. Hope you add more variety. user23,1.0.0
-s024,4,Great Meal Plans,The diet plans are very useful. Combined with training the results are even better. Really professional. user24,1.0.0
-s025,5,Honest App,No annoying gimmicks, just focused on fitness. It's a genuine, honest app. user25,1.0.0
-s026,1,Crashes Mid-Workout,Crashes right in the middle of my workout and doesn't save my progress. So frustrating. user26,1.0.0
-s027,2,Unskippable Video Ads,The video ads are so long and you can't skip them. Total waste of time. user27,1.0.0
-s028,3,Beginner Friendly,Pretty friendly for beginners. The intro courses are detailed and easy to follow. user28,1.0.0
-s029,4,Comprehensive Stats,Data tracking is very thorough. Being able to see my progress keeps me motivated. user29,1.0.0
-s030,5,Strongly Recommend,Best fitness app I've used. Strongly recommend to anyone wanting to get in shape. user30,1.0.0
+s001,1,Constant Crashes,The app keeps crashing every time I open it. Completely unusable really disappointing. Please fix this asap.,user1,1.0.0
+s002,2,Too Many Ads,Way too many ads. There's an ad after every two pieces of content it ruins the whole experience.,user2,1.0.0
+s003,3,Decent But Ugly,It works fine functionally but the UI design is really outdated and ugly. Hope you can polish the interface.,user3,1.0.0
+s004,4,Pretty Good,Overall pretty solid. The workout plans are practical. I've been following them for two weeks and can see results.,user4,1.0.0
+s005,5,Highly Recommend,Amazing fitness app. The courses are very professional and the customer support is super helpful.,user5,1.0.0
+s006,1,Extremely Slow Loading,Takes forever to load every time I open it. Even with good Wi‑Fi it's painfully slow. Bad experience.,user6,1.0.0
+s007,2,Membership Too Expensive,The premium membership is way overpriced. Most features are locked behind paywall not worth the money.,user7,1.0.0
+s008,3,It's Okay,Just an average fitness app. Has all the basic features but nothing really stands out.,user8,1.0.0
+s009,4,Great Workouts,The workout content is really diverse suitable for people at different levels. Instructions are clear.,user9,1.0.0
+s010,5,Love the Check‑in Feature,My favorite part is the daily check‑in. It keeps me motivated and helps me build a habit.,user10,1.0.0
+s011,1,Inaccurate Calorie Count,Calorie calculation is totally off. Way off from the real numbers completely useless for tracking.,user11,1.0.0
+s012,2,Battery Drain Issue,It drains battery so fast in the background. My phone gets really hot after using it for a while. Needs optimization.,user12,1.0.0
+s013,3,Average UI,Interface design is mediocre. Not great but not terrible either it's functional.,user13,1.0.0
+s014,4,Smart Recommendations,The recommended training plans fit me really well. It's customized based on my situation very thoughtful.,user14,1.0.0
+s015,5,Great Community,Everyone in the community is supportive and encouraging. Great fitness vibe.,user15,1.0.0
+s016,1,Cannot Log In,Keeps failing to log in. Tried multiple accounts and none work. Can't even get into the app.,user16,1.0.0
+s017,2,Poor Exercise Form,The demo exercises don't look like proper form. I'm afraid I'll get injured if I follow them.,user17,1.0.0
+s018,3,Not Enough Free Content,There's very little free content. Most of it is paid not a lot of options for free users.,user18,1.0.0
+s019,4,Nice Reminder Feature,Daily reminders are really useful. I never forget to workout anymore. It helped me build a routine.,user19,1.0.0
+s020,5,Seeing Real Progress,Been using it for a month and my stamina has improved noticeably. It actually works.,user20,1.0.0
+s021,1,Terrible Support,Reached out to customer service with an issue and never heard back. Awful after‑sales service.,user21,1.0.0
+s022,2,Worse After Update,The last update made everything laggier. The old version was better it keeps getting worse.,user22,1.0.0
+s023,3,Need More Workouts,It's okay overall but there aren't enough workout types. Hope you add more variety.,user23,1.0.0
+s024,4,Great Meal Plans,The diet plans are very useful. Combined with training the results are even better. Really professional.,user24,1.0.0
+s025,5,Honest App,No annoying gimmicks just focused on fitness. It's a genuine honest app.,user25,1.0.0
+s026,1,Crashes Mid‑Workout,Crashes right in the middle of my workout and doesn't save my progress. So frustrating.,user26,1.0.0
+s027,2,Unskippable Video Ads,The video ads are so long and you can't skip them. Total waste of time.,user27,1.0.0
+s028,3,Beginner Friendly,Pretty friendly for beginners. The intro courses are detailed and easy to follow.,user28,1.0.0
+s029,4,Comprehensive Stats,Data tracking is very thorough. Being able to see my progress keeps me motivated.,user29,1.0.0
+s030,5,Strongly Recommend,Best fitness app I've used. Strongly recommend to anyone wanting to get in shape.,user30,1.0.0
